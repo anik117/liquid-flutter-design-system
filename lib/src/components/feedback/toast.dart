@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 import '../../foundation/glass.dart';
+import '../../foundation/pressable.dart';
 import '../../theme/lq_theme.dart';
 import '../../tokens/metrics.dart';
 import '../../tokens/motion.dart';
@@ -25,6 +26,8 @@ abstract final class LqToast {
     IconData? icon,
     LqTone tone = LqTone.positive,
     double clearance = tabBarClearance,
+    String? actionLabel,
+    VoidCallback? onAction,
     Duration duration = const Duration(milliseconds: 2400),
   }) {
     _current?.remove();
@@ -39,6 +42,8 @@ abstract final class LqToast {
           icon: icon,
           tone: tone,
           clearance: clearance,
+          actionLabel: actionLabel,
+          onAction: onAction,
           duration: duration,
           onDone: () {
             if (_current == entry) _current = null;
@@ -58,6 +63,8 @@ class _Toast extends StatefulWidget {
     required this.message,
     required this.tone,
     required this.clearance,
+    this.actionLabel,
+    this.onAction,
     required this.duration,
     required this.onDone,
     this.icon,
@@ -67,6 +74,10 @@ class _Toast extends StatefulWidget {
   final IconData? icon;
   final LqTone tone;
   final double clearance;
+
+  /// Optional inline action, e.g. "Undo". Tapping it dismisses the toast.
+  final String? actionLabel;
+  final VoidCallback? onAction;
   final Duration duration;
   final VoidCallback onDone;
 
@@ -143,6 +154,21 @@ class _ToastState extends State<_Toast> {
                         ),
                       ),
                     ),
+                    if (widget.actionLabel != null && widget.onAction != null) ...[
+                      const SizedBox(width: LqSpace.x3),
+                      LqPressable(
+                        semanticLabel: widget.actionLabel,
+                        haptic: LqHaptic.selection,
+                        onTap: () {
+                          widget.onAction!();
+                          _dismiss();
+                        },
+                        builder: (_, _) => Text(
+                          widget.actionLabel!,
+                          style: lq.type.subheadMedium.copyWith(color: c.textAccent),
+                        ),
+                      ),
+                    ],
                   ],
                 ),
               ),

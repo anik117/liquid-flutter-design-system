@@ -104,22 +104,29 @@ class _LqPageScaffoldState extends State<LqPageScaffold> {
       ),
     );
 
-    final content = ListView(
+    // Pages hold a handful of sections, so every section is built up front
+    // (no lazy list): finders, accessibility and state keepers see the whole
+    // page. Long lists belong in their own scrollable screen.
+    final content = SingleChildScrollView(
       controller: _scroll,
+      physics: const AlwaysScrollableScrollPhysics(),
       padding: EdgeInsets.fromLTRB(
         LqSpace.gutter,
         top + barHeight,
         LqSpace.gutter,
         widget.bottomInset + LqSpace.x8,
       ),
-      children: [
-        title,
-        const SizedBox(height: LqSpace.x5),
-        for (var i = 0; i < widget.children.length; i++) ...[
-          if (i > 0) const SizedBox(height: LqSpace.x6),
-          widget.children[i],
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          title,
+          const SizedBox(height: LqSpace.x5),
+          for (var i = 0; i < widget.children.length; i++) ...[
+            if (i > 0) const SizedBox(height: LqSpace.x6),
+            widget.children[i],
+          ],
         ],
-      ],
+      ),
     );
 
     final bar = SizedBox(

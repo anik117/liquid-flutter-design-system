@@ -4,11 +4,20 @@ import '../../theme/lq_theme.dart';
 import '../../tokens/motion.dart';
 
 class LqTabItem {
-  const LqTabItem({required this.icon, required this.activeIcon, required this.label});
+  const LqTabItem({
+    required this.icon,
+    required this.activeIcon,
+    required this.label,
+    this.id,
+  });
 
   final IconData icon;
   final IconData activeIcon;
   final String label;
+
+  /// Stable id for UI tests and Maestro (`id: "nav_drives"`): set as the
+  /// tab's semantics identifier and widget key.
+  final String? id;
 }
 
 /// One tab's icon and label. Taps and drags are handled by the bar, so
@@ -33,6 +42,8 @@ class LqTabCell extends StatelessWidget {
     // One accessibility element per tab, with its own tap action:
     // excludeSemantics would otherwise leave VoiceOver unable to switch.
     return Semantics(
+      key: item.id == null ? null : ValueKey<String>(item.id!),
+      identifier: item.id,
       button: true,
       selected: selected,
       label: item.label,
