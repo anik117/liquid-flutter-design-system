@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import '../../theme/lq_theme.dart';
 import '../../tokens/metrics.dart';
 import '../../tokens/motion.dart';
+import 'page_wash.dart';
 import 'scroll_edge.dart';
 
 /// A page with an iOS-style large title. Glass action buttons float at the
@@ -18,6 +19,7 @@ class LqPageScaffold extends StatefulWidget {
     this.leading,
     this.actions = const [],
     this.bottomInset = 0,
+    this.washHeight,
   });
 
   final String title;
@@ -32,6 +34,9 @@ class LqPageScaffold extends StatefulWidget {
 
   /// Space reserved at the bottom, e.g. for a floating tab bar.
   final double bottomInset;
+
+  /// Paints [LqPageWash] down to this height (null: plain canvas).
+  final double? washHeight;
 
   @override
   State<LqPageScaffold> createState() => _LqPageScaffoldState();
@@ -178,6 +183,8 @@ class _LqPageScaffoldState extends State<LqPageScaffold> {
       color: c.canvas,
       child: Stack(
         children: [
+          if (widget.washHeight != null)
+            LqPageWash(scroll: _scroll, height: widget.washHeight!),
           content,
           Positioned(top: 0, left: 0, right: 0, child: bar),
         ],

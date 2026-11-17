@@ -5,6 +5,7 @@ import '../../foundation/pressable.dart';
 import '../../theme/lq_theme.dart';
 import '../../tokens/metrics.dart';
 import '../../tokens/motion.dart';
+import '../../tokens/hues.dart';
 import 'badge.dart';
 
 /// An inline alert that sits in the page: "Sync paused while offline".
@@ -20,7 +21,16 @@ class LqBanner extends StatefulWidget {
     this.actionLabel,
     this.onAction,
     this.onDismiss,
+    this.raised = false,
+    this.hue,
   });
+
+  /// A card-shaped notice: a light tint of the tone with the glyph on a
+  /// white tile, so it reads as a notice among a page's white cards.
+  final bool raised;
+
+  /// The glyph tile's hue when [raised]; defaults to the tone's tint.
+  final LqHue? hue;
 
   /// One short sentence saying what happened.
   final String title;
@@ -103,37 +113,41 @@ class _Body extends StatelessWidget {
       explicitChildNodes: true,
       liveRegion: true,
       child: Container(
-        decoration: BoxDecoration(
-          color: bg,
-          borderRadius: BorderRadius.circular(lq.radius.lg),
-          border: Border.all(color: fg.withValues(alpha: 0.14)),
-        ),
-        padding: EdgeInsets.fromLTRB(
-          LqSpace.x3,
-          LqSpace.x3,
-          dismissible ? 0 : LqSpace.x4,
-          LqSpace.x3,
-        ),
+        decoration: banner.raised
+            ? BoxDecoration(
+                color: Color.alphaBlend(bg.withValues(alpha: c.isDark ? (bg.a < 1 ? bg.a : 0.5) : bg.a * 0.6), c.surface),
+                borderRadius: BorderRadius.circular(lq.radius.xl),
+                border: Border.all(color: fg.withValues(alpha: 0.12), width: 0.5),
+              )
+            : BoxDecoration(
+                color: bg,
+                borderRadius: BorderRadius.circular(lq.radius.lg),
+                border: Border.all(color: fg.withValues(alpha: 0.14)),
+              ),
+        // The action's 44pt tap area supplies the bottom space when present.
+        padding: EdgeInsets.fromLTRB(banner.raised ? LqSpace.x4 : LqSpace.x3, LqSpace.x3,
+            dismissible ? 0 : LqSpace.x4, banner.actionLabel == null ? LqSpace.x3 : 0),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 1),
-              child: Icon(
-                banner.icon ?? LqBanner.iconFor(banner.tone),
-                size: LqIconSize.lg,
-                color: fg,
+            if (banner.raised)
+              Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(color: c.surface, borderRadius: BorderRadius.circular(lq.radius.sm)),
+                child: Icon(banner.icon ?? LqBanner.iconFor(banner.tone), size: 20, color: banner.hue?.onSoft(c) ?? fg),
+              )
+            else
+              Padding(
+                padding: const EdgeInsets.only(top: 1),
+                child: Icon(banner.icon ?? LqBanner.iconFor(banner.tone), size: LqIconSize.lg, color: fg),
               ),
-            ),
             const SizedBox(width: LqSpace.x3),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    banner.title,
-                    style: lq.type.subheadMedium.copyWith(color: c.textPrimary),
-                  ),
+                  Text(banner.title, style: lq.type.subheadMedium.copyWith(color: c.textPrimary)),
                   if (banner.message != null) ...[
                     const SizedBox(height: 2),
                     Text(
@@ -141,21 +155,22 @@ class _Body extends StatelessWidget {
                       style: lq.type.footnote.copyWith(color: c.textSecondary),
                     ),
                   ],
-                  if (banner.actionLabel != null) ...[
-                    const SizedBox(height: LqSpace.x2),
+                  if (banner.actionLabel != null)
                     LqPressable(
                       onTap: banner.onAction,
                       semanticLabel: banner.actionLabel,
                       builder: (context, pressed) => AnimatedOpacity(
                         opacity: pressed ? 0.6 : 1,
                         duration: LqMotion.fast,
-                        child: Text(
-                          banner.actionLabel!,
-                          style: lq.type.subheadMedium.copyWith(color: fg),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          child: Text(
+                            banner.actionLabel!,
+                            style: lq.type.subheadMedium.copyWith(color: banner.hue?.onSoft(c) ?? fg),
+                          ),
                         ),
                       ),
                     ),
-                  ],
                 ],
               ),
             ),

@@ -61,9 +61,15 @@ abstract final class LqIconSize {
 
 /// Shadows from BoardUI's shadow scale. Dark mode passes a heavier color.
 abstract final class LqShadows {
-  /// 1px contact shadow under white cards on a grey page.
+  /// A 1px contact shadow plus a soft ambient lift under cards.
   static List<BoxShadow> card(Color c) => [
     BoxShadow(color: c.withValues(alpha: c.a * 0.2), offset: const Offset(0, 1), blurRadius: 1),
+    BoxShadow(
+      color: c.withValues(alpha: c.a * 0.22),
+      offset: const Offset(0, 6),
+      blurRadius: 18,
+      spreadRadius: -4,
+    ),
   ];
 
   /// Buttons and small raised controls (BoardUI shadow-xs).

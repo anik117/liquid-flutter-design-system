@@ -12,6 +12,7 @@ export 'package:remixicon/remixicon.dart' show RemixIcons;
 
 // Foundations
 export 'src/foundation/glass.dart';
+export 'src/foundation/sheen.dart';
 export 'src/foundation/haptics.dart';
 export 'src/foundation/licenses.dart';
 export 'src/foundation/pressable.dart';
@@ -22,6 +23,7 @@ export 'src/tokens/brand.dart';
 export 'src/tokens/colors.dart';
 export 'src/tokens/metrics.dart';
 export 'src/tokens/motion.dart';
+export 'src/tokens/hues.dart';
 export 'src/tokens/palette.dart';
 export 'src/tokens/typography.dart';
 

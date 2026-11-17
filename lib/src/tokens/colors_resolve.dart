@@ -14,20 +14,22 @@ LqColors resolveLight(LqBrand brand, {bool highContrast = false}) {
   final a = brand.accent;
   return LqColors(
     brightness: Brightness.light,
-    canvas: _n.s100,
+    // A cool grey (Tailwind gray-100) so white cards lift off the page.
+    canvas: const Color(0xFFF3F4F6),
     surface: LqPalette.white,
     surfaceRaised: LqPalette.white,
     surfaceSunken: _n.s100,
     surfacePressed: _n.s200,
     textPrimary: _n.s950,
-    textSecondary: highContrast ? _n.s700 : _n.s500,
+    // #6B6B6B: 4.6:1 on the gray-100 canvas, 5.3:1 on white (WCAG AA).
+    textSecondary: highContrast ? _n.s700 : const Color(0xFF6B6B6B),
     textTertiary: highContrast ? _n.s600 : _n.s400,
     textPlaceholder: highContrast ? _n.s600 : _n.s400,
     textOnAccent: LqPalette.white,
     textAccent: a.s700,
     textDanger: _red.s600,
     iconPrimary: _n.s950,
-    iconSecondary: highContrast ? _n.s700 : _n.s500,
+    iconSecondary: highContrast ? _n.s700 : const Color(0xFF6B6B6B),
     iconTertiary: _n.s400,
     border: highContrast ? _n.s400 : _n.s200,
     borderStrong: highContrast ? _n.s600 : _n.s300,
@@ -65,7 +67,7 @@ LqColors resolveLight(LqBrand brand, {bool highContrast = false}) {
     glassTintStrong: const Color(0xA6FFFFFF),
     rimHighlight: const Color(0xE6FFFFFF),
     rimShade: const Color(0x24000000),
-    shadow: const Color(0x2E000000),
+    shadow: const Color(0x33101828),
     scrim: const Color(0x66000000),
   );
 }

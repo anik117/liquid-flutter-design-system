@@ -36,3 +36,11 @@ are not included.
 ## Remix Icon
 
 Icons come from the `remixicon` package (Remix Icon, Apache License 2.0).
+
+## Tailwind CSS color palette
+
+The decorative hues in `lib/src/tokens/hues.dart` (`LqHue`) and the light-mode
+canvas (gray-100) use color values from the Tailwind CSS default palette
+(https://github.com/tailwindlabs/tailwindcss), MIT License, Copyright (c)
+Tailwind Labs, Inc. The MIT permission notice above applies to them in the
+same terms.

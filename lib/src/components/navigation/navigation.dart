@@ -1,5 +1,6 @@
 // navigation components. Add new navigation files here.
 export 'page_scaffold.dart';
+export 'page_wash.dart';
 export 'scroll_edge.dart';
 export 'tab_bar.dart';
 export 'back_button.dart';

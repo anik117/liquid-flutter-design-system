@@ -19,6 +19,7 @@ class LqAmount extends StatelessWidget {
     this.decimals = 2,
     this.style,
     this.color,
+    this.minorColor,
   });
 
   final double value;
@@ -33,6 +34,9 @@ class LqAmount extends StatelessWidget {
   /// Defaults to the hero style.
   final TextStyle? style;
   final Color? color;
+
+  /// Color of the sign, decimals and unit (grey by default).
+  final Color? minorColor;
 
   /// Groups thousands with commas: 12345.6 → ("12,345", ".60").
   static (String whole, String fraction) split(double v, int decimals) {
@@ -55,7 +59,7 @@ class LqAmount extends StatelessWidget {
         .copyWith(color: color ?? c.textPrimary);
     final small = big.copyWith(
       fontSize: (big.fontSize ?? 44) * 0.55,
-      color: c.textSecondary,
+      color: minorColor ?? c.textSecondary,
       letterSpacing: 0,
     );
     final (whole, fraction) = split(value, decimals);

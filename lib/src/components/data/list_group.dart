@@ -67,7 +67,7 @@ class LqListGroup extends StatelessWidget {
           clipBehavior: Clip.antiAlias,
           decoration: BoxDecoration(
             color: c.surface,
-            borderRadius: BorderRadius.circular(lq.radius.lg),
+            borderRadius: BorderRadius.circular(lq.radius.xl),
             border: Border.all(color: c.border, width: 0.5),
             boxShadow: LqShadows.card(c.shadow),
           ),

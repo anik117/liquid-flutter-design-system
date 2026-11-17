@@ -4,32 +4,62 @@ import 'package:remixicon/remixicon.dart';
 import '../../foundation/pressable.dart';
 import '../../theme/lq_theme.dart';
 import '../../tokens/metrics.dart';
+import '../../tokens/hues.dart';
 import '../../tokens/motion.dart';
+import '../../tokens/palette.dart';
 import '../feedback/badge.dart';
 
-/// A 32pt rounded tile holding one glyph. Neutral by default; a [tone]
-/// colors the glyph only, never a bright disc.
+/// A rounded tile holding one glyph (32pt by default). Neutral unless given
+/// a [tone] (status) or a [hue] (category). [filled] paints a solid fill
+/// (the hue, or the brand accent without one) with a white glyph, for the
+/// one tile that should lead the eye. [subtle] keeps the neutral tile and
+/// tints only the glyph, so category icons stay a quiet touch and never
+/// look like a button. [circle] draws a disc instead of a rounded square.
 class LqIconTile extends StatelessWidget {
-  const LqIconTile({super.key, required this.icon, this.tone});
+  const LqIconTile({
+    super.key,
+    required this.icon,
+    this.tone,
+    this.hue,
+    this.size = LqSize.iconTile,
+    this.filled = false,
+    this.subtle = false,
+    this.circle = false,
+  });
 
+  final bool subtle;
+  final bool circle;
   final IconData icon;
   final LqTone? tone;
+  final LqHue? hue;
+  final double size;
+  final bool filled;
 
   @override
   Widget build(BuildContext context) {
     final lq = context.lq;
     final c = lq.colors;
-    final (bg, fg) = tone == null
-        ? (c.surfaceSunken, c.iconPrimary)
-        : LqBadge.colorsFor(c, tone!);
+    final h = hue;
+    var (bg, fg) = h != null
+        ? (filled ? (h.s600, LqPalette.white) : (h.soft(c), h.onSoft(c)))
+        : filled
+            ? (c.accentBottom, LqPalette.white)
+            : tone == null
+            ? (c.surfaceSunken, c.iconPrimary)
+            : LqBadge.colorsFor(c, tone!);
+    if (subtle && !filled) {
+      bg = c.surfaceSunken;
+      if (tone == null && h == null) fg = c.iconSecondary;
+    }
     return Container(
-      width: LqSize.iconTile,
-      height: LqSize.iconTile,
+      width: size,
+      height: size,
       decoration: BoxDecoration(
         color: bg,
-        borderRadius: BorderRadius.circular(lq.radius.sm),
+        shape: circle ? BoxShape.circle : BoxShape.rectangle,
+        borderRadius: circle ? null : BorderRadius.circular(lq.radius.sm * size / LqSize.iconTile),
       ),
-      child: Icon(icon, size: 18, color: fg),
+      child: Icon(icon, size: size * 0.56, color: fg),
     );
   }
 }
@@ -48,9 +78,13 @@ class LqListRow extends StatelessWidget {
     this.onTap,
     this.showChevron,
     this.destructive = false,
+    this.titleMaxLines,
   });
 
   final String title;
+
+  /// Caps the title's lines (1 keeps a list's rows even); null wraps freely.
+  final int? titleMaxLines;
   final String? subtitle;
   final Widget? leading;
 
@@ -92,6 +126,8 @@ class LqListRow extends StatelessWidget {
                 children: [
                   Text(
                     title,
+                    maxLines: titleMaxLines,
+                    overflow: titleMaxLines == null ? null : TextOverflow.ellipsis,
                     style: lq.type.body.copyWith(
                       color: destructive ? c.textDanger : c.textPrimary,
                     ),

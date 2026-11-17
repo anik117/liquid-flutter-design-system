@@ -7,7 +7,9 @@ import '../../tokens/colors.dart';
 import '../../tokens/metrics.dart';
 import '../../tokens/motion.dart';
 
-enum LqButtonVariant { primary, secondary, ghost, danger, plain }
+/// `quiet` is a neutral text button (secondary ink, no tint) for section
+/// links like "See all", so the brand color stays on primary actions.
+enum LqButtonVariant { primary, secondary, ghost, danger, plain, quiet }
 
 enum LqButtonSize { large, medium, small }
 
@@ -84,7 +86,7 @@ class LqButton extends StatelessWidget {
             ],
           ],
         );
-        return AnimatedContainer(
+        final face = AnimatedContainer(
           duration: LqMotion.fast,
           height: height,
           padding: EdgeInsets.symmetric(
@@ -124,6 +126,9 @@ class LqButton extends StatelessWidget {
             ],
           ),
         );
+        // Small buttons keep a 36pt look inside a 44pt tap area.
+        if (height >= LqSize.control) return face;
+        return SizedBox(height: LqSize.control, child: Center(widthFactor: 1, child: face));
       },
     );
   }
@@ -165,6 +170,10 @@ class LqButton extends StatelessWidget {
       LqButtonVariant.plain => _Look(
         fill: pressed ? c.accentSoft : const Color(0x00000000),
         foreground: c.textAccent,
+      ),
+      LqButtonVariant.quiet => _Look(
+        fill: pressed ? c.surfacePressed : const Color(0x00000000),
+        foreground: c.textSecondary,
       ),
     };
   }

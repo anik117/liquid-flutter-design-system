@@ -78,8 +78,10 @@ class BarsPainter extends CustomPainter {
     if (picked != null && picked != i) {
       return Color.lerp(base, ChartScale.stepBack(c), dim * (tones.length > 1 ? 0.85 : 1))!;
     }
+    // With a current period marked, the other bars step back to neutral so
+    // the brand color lands on one bar only.
     if (picked == null && highlighted != null && highlighted != i) {
-      return Color.lerp(base, c.surface, 0.45)!;
+      return tones.length > 1 ? Color.lerp(base, c.surface, 0.45)! : ChartScale.stepBack(c);
     }
     return base;
   }
