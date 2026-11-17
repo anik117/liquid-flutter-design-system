@@ -1,0 +1,25 @@
+name: liquid_flutter_design_system
+description: "Liquid Flutter Design System: brand tokens, light and dark themes, Liquid Glass surfaces and fluid, spring-based components for Flutter apps on iOS and Android."
+version: 0.1.0
+publish_to: none
+
+environment:
+  sdk: ^3.14.0
+  flutter: ">=3.50.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  material_ui: ^1.11.1
+  cupertino_ui: ^1.1.7
+  remixicon: ^4.9.3
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  assets:
+    # Shown on the app licence page via LqLicenses.
+    - licenses/BOARDUI_LICENSE.txt
