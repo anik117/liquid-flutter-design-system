@@ -5,6 +5,7 @@ import '../../tokens/metrics.dart';
 import '../../tokens/motion.dart';
 import 'page_wash.dart';
 import 'scroll_edge.dart';
+import 'page_actions_row.dart';
 
 /// A page with an iOS-style large title. Glass action buttons float at the
 /// top. Once the large title scrolls away, content dissolves into a
@@ -170,10 +171,8 @@ class _LqPageScaffoldState extends State<LqPageScaffold> {
                     ),
                   ),
                 ),
-                for (var i = 0; i < widget.actions.length; i++) ...[
-                  if (i > 0) const SizedBox(width: LqSpace.x2),
-                  widget.actions[i],
-                ],
+                if (widget.actions.isNotEmpty)
+                  Expanded(flex: 4, child: LqPageActionsRow(actions: widget.actions)),
                 if (widget.actions.isEmpty && widget.leading != null)
                   const SizedBox(width: LqSize.control),
               ],

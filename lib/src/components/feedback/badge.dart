@@ -67,7 +67,15 @@ class LqBadge extends StatelessWidget {
             Icon(icon, size: 13, color: fg),
             const SizedBox(width: LqSpace.x1),
           ],
-          Text(label, style: lq.type.caption.copyWith(color: fg)),
+          // Truncates in a tight spot instead of overflowing its row.
+          Flexible(
+            child: Text(
+              label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: lq.type.caption.copyWith(color: fg),
+            ),
+          ),
         ],
       ),
     );

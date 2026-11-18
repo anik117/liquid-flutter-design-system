@@ -120,7 +120,9 @@ LqColors resolveDark(LqBrand brand, {bool highContrast = false}) {
     switchOffTop: _n.s700,
     switchOffBottom: _n.s700,
     knob: _n.s50,
-    segmentedTrack: _n.s800,
+    // See-through so the track shows on raised sheets and dialogs too (an
+    // opaque neutral 800 matched them and the control lost its outline).
+    segmentedTrack: const Color(0x24FFFFFF),
     segmentedThumb: _n.s600,
     glassTint: const Color(0x59383838),
     glassBubble: const Color(0x1FFFFFFF),

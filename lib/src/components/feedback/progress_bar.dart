@@ -118,7 +118,9 @@ class _LqProgressBarState extends State<LqProgressBar>
         child: ClipRRect(
           borderRadius: radius,
           child: DecoratedBox(
-            decoration: BoxDecoration(color: c.surfaceSunken),
+            // The segmented track reads on the page canvas and on cards alike;
+            // surfaceSunken matched the light canvas and vanished there.
+            decoration: BoxDecoration(color: c.segmentedTrack),
             child: SizedBox.expand(child: bar),
           ),
         ),

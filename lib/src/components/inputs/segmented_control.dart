@@ -14,8 +14,11 @@ class LqSegment<T> {
 }
 
 /// BoardUI's segmented control: a sunken track and a raised thumb that
-/// slides between equal segments on a spring. Tap a segment, or press and
-/// drag the thumb across; it pinches in slightly while held, as on iOS.
+/// slides between segments on a spring. Segments are equal while every label
+/// fits; when one does not ("Upcoming Service"), widths follow the labels, as
+/// iOS's apportionsSegmentWidthsByContent, and a label that still cannot fit
+/// shrinks a little instead of being cut. Tap a segment, or press and drag
+/// the thumb across; it pinches in slightly while held, as on iOS.
 class LqSegmentedControl<T> extends StatefulWidget {
   const LqSegmentedControl({
     super.key,
@@ -34,7 +37,9 @@ class LqSegmentedControl<T> extends StatefulWidget {
 
 class _LqSegmentedControlState<T> extends State<LqSegmentedControl<T>> {
   bool _held = false;
-  double _w = 1;
+  List<double> _widths = const [1];
+
+  static const double _labelPad = 12;
 
   void _select(int i) {
     final v = widget.segments[i].value;
@@ -43,8 +48,42 @@ class _LqSegmentedControlState<T> extends State<LqSegmentedControl<T>> {
     widget.onChanged(v);
   }
 
-  void _selectAt(double dx) =>
-      _select((dx / _w).floor().clamp(0, widget.segments.length - 1));
+  void _selectAt(double dx) {
+    var edge = 0.0;
+    for (var i = 0; i < _widths.length; i++) {
+      edge += _widths[i];
+      if (dx < edge) return _select(i);
+    }
+    _select(_widths.length - 1);
+  }
+
+  /// Equal widths while every label fits; otherwise each label gets its own
+  /// width and the spare room is shared (or, when even that overflows, the
+  /// widths are scaled to the label sizes).
+  List<double> _layout(BuildContext context, double total) {
+    final n = widget.segments.length;
+    final style = context.lq.type.subheadMedium.copyWith(fontWeight: FontWeight.w600);
+    final scaler = MediaQuery.textScalerOf(context);
+    final need = [
+      for (final s in widget.segments)
+        (TextPainter(
+              text: TextSpan(text: s.label, style: style),
+              textDirection: TextDirection.ltr,
+              textScaler: scaler,
+              maxLines: 1,
+            )..layout())
+            .width +
+            _labelPad * 2,
+    ];
+    final equal = total / n;
+    if (need.every((w) => w <= equal)) return List.filled(n, equal);
+    final sum = need.fold<double>(0, (a, b) => a + b);
+    if (sum <= total) {
+      final spare = (total - sum) / n;
+      return [for (final w in need) w + spare];
+    }
+    return [for (final w in need) w * total / sum];
+  }
 
   void _hold(bool held) {
     if (held != _held) setState(() => _held = held);
@@ -66,7 +105,9 @@ class _LqSegmentedControlState<T> extends State<LqSegmentedControl<T>> {
       ),
       child: LayoutBuilder(
         builder: (context, box) {
-          _w = box.maxWidth / widget.segments.length;
+          final widths = _widths = _layout(context, box.maxWidth);
+          final at = index < 0 ? 0 : index;
+          final left = widths.take(at).fold<double>(0, (a, b) => a + b);
           return GestureDetector(
             behavior: HitTestBehavior.opaque,
             onTapDown: (_) => _hold(true),
@@ -84,10 +125,10 @@ class _LqSegmentedControlState<T> extends State<LqSegmentedControl<T>> {
                 AnimatedPositioned(
                   duration: LqMotion.of(context, LqMotion.slow),
                   curve: LqMotion.springCurve,
-                  left: _w * (index < 0 ? 0 : index),
+                  left: left,
                   top: 0,
                   bottom: 0,
-                  width: _w,
+                  width: widths[at],
                   child: AnimatedScale(
                     scale: _held && !LqMotion.reduced(context) ? 0.95 : 1,
                     duration: LqMotion.of(context, LqMotion.standard),
@@ -104,7 +145,7 @@ class _LqSegmentedControlState<T> extends State<LqSegmentedControl<T>> {
                 Row(
                   children: [
                     for (var i = 0; i < widget.segments.length; i++)
-                      Expanded(child: _label(context, i, i == index)),
+                      SizedBox(width: widths[i], child: _label(context, i, i == index)),
                   ],
                 ),
               ],
@@ -123,16 +164,19 @@ class _LqSegmentedControlState<T> extends State<LqSegmentedControl<T>> {
       selected: selected,
       onTap: () => _select(i),
       child: Center(
-        child: AnimatedDefaultTextStyle(
-          duration: LqMotion.fast,
-          style: lq.type.subheadMedium.copyWith(
-            color: selected ? c.textPrimary : c.textSecondary,
-            fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
-          ),
-          child: Text(
-            widget.segments[i].label,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: _labelPad / 2),
+          // Shrinks a label that cannot fit rather than cutting it off.
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: AnimatedDefaultTextStyle(
+              duration: LqMotion.fast,
+              style: lq.type.subheadMedium.copyWith(
+                color: selected ? c.textPrimary : c.textSecondary,
+                fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
+              ),
+              child: Text(widget.segments[i].label, maxLines: 1),
+            ),
           ),
         ),
       ),
