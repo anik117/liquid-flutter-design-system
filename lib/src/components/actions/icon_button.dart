@@ -19,7 +19,8 @@ enum LqIconButtonVariant {
   /// Soft brand tint.
   ghost,
 
-  /// Icon only, no face.
+  /// Icon only, no face, in the neutral secondary icon colour (green is
+  /// kept for primary actions).
   plain,
 }
 
@@ -58,7 +59,7 @@ class LqIconButton extends StatelessWidget {
             : switch (variant) {
                 LqIconButtonVariant.primary => c.textOnAccent,
                 LqIconButtonVariant.ghost => c.accentOnSoft,
-                LqIconButtonVariant.plain => c.textAccent,
+                LqIconButtonVariant.plain => c.iconSecondary,
                 _ => c.iconPrimary,
               };
         final glyph = Center(child: Icon(icon, size: iconSize, color: fg));

@@ -116,13 +116,13 @@ class _LqChipState extends State<LqChip> with SingleTickerProviderStateMixin {
     final enabled = input || widget.onSelected != null;
     final fg = !enabled
         ? c.disabledText
-        : (selected ? c.surface : c.textPrimary);
+        : (selected ? c.accentOnSoft : c.textPrimary);
 
     Widget face(bool pressed) {
-      // Selected chips invert (ink fill, surface text) so a picked filter
-      // never reads like a status badge or a highlight.
+      // Selected chips take the soft accent tint with a faint accent rim:
+      // clearly picked, but never a solid white (dark) or ink (light) block.
       final fill = selected
-          ? (pressed ? Color.lerp(c.textPrimary, c.surface, 0.2)! : c.textPrimary)
+          ? (pressed ? c.accentSoftPressed : c.accentSoft)
           : (pressed ? c.surfacePressed : c.surface);
       return AnimatedContainer(
         duration: LqMotion.of(context, LqMotion.fast),
@@ -134,7 +134,9 @@ class _LqChipState extends State<LqChip> with SingleTickerProviderStateMixin {
         decoration: BoxDecoration(
           color: enabled ? fill : c.disabledFill,
           borderRadius: BorderRadius.circular(LqRadius.full),
-          border: Border.all(color: selected ? fill : c.border),
+          border: Border.all(
+            color: selected ? c.accent.withValues(alpha: 0.4) : c.border,
+          ),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
