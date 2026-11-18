@@ -53,7 +53,7 @@ class LqSection extends StatelessWidget {
             const SizedBox(height: LqSpace.x1),
             Text(caption!, style: lq.type.subhead.copyWith(color: c.textSecondary)),
           ],
-          const SizedBox(height: LqSpace.x3),
+          const SizedBox(height: LqSpace.x4),
         ],
         for (var i = 0; i < children.length; i++) ...[
           if (i > 0) SizedBox(height: gap),

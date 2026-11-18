@@ -20,6 +20,7 @@ class LqPageScaffold extends StatefulWidget {
     this.actions = const [],
     this.bottomInset = 0,
     this.washHeight,
+    this.sectionGap = LqSpace.x6,
   });
 
   final String title;
@@ -37,6 +38,9 @@ class LqPageScaffold extends StatefulWidget {
 
   /// Paints [LqPageWash] down to this height (null: plain canvas).
   final double? washHeight;
+
+  /// Space between top-level sections (24pt; denser data pages use more).
+  final double sectionGap;
 
   @override
   State<LqPageScaffold> createState() => _LqPageScaffoldState();
@@ -117,7 +121,7 @@ class _LqPageScaffoldState extends State<LqPageScaffold> {
       physics: const AlwaysScrollableScrollPhysics(),
       padding: EdgeInsets.fromLTRB(
         LqSpace.gutter,
-        top + barHeight,
+        top + barHeight + LqSpace.x4,
         LqSpace.gutter,
         widget.bottomInset + LqSpace.x8,
       ),
@@ -127,7 +131,7 @@ class _LqPageScaffoldState extends State<LqPageScaffold> {
           title,
           const SizedBox(height: LqSpace.x5),
           for (var i = 0; i < widget.children.length; i++) ...[
-            if (i > 0) const SizedBox(height: LqSpace.x6),
+            if (i > 0) SizedBox(height: widget.sectionGap),
             widget.children[i],
           ],
         ],

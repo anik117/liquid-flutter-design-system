@@ -114,7 +114,7 @@ class LqListRow extends StatelessWidget {
         constraints: const BoxConstraints(minHeight: LqSize.row),
         padding: const EdgeInsets.symmetric(
           horizontal: LqSpace.x4,
-          vertical: LqSpace.x2 + 2,
+          vertical: LqSpace.x3 + 2,
         ),
         child: Row(
           children: [
@@ -133,7 +133,7 @@ class LqListRow extends StatelessWidget {
                     ),
                   ),
                   if (subtitle != null) ...[
-                    const SizedBox(height: 2),
+                    const SizedBox(height: 3),
                     Text(
                       subtitle!,
                       maxLines: 2,

@@ -15,7 +15,12 @@ class LqBadge extends StatelessWidget {
     this.tone = LqTone.neutral,
     this.icon,
     this.dot = false,
+    this.solid = false,
   });
+
+  /// A filled badge with white text, for the one highlight in a group
+  /// ("Most popular"). Soft badges label categories and status.
+  final bool solid;
 
   final String label;
   final LqTone tone;
@@ -37,7 +42,11 @@ class LqBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final lq = context.lq;
-    final (bg, fg) = colorsFor(lq.colors, tone);
+    final c = lq.colors;
+    final (soft, ink) = colorsFor(c, tone);
+    final (bg, fg) = !solid
+        ? (soft, ink)
+        : (tone == LqTone.accent || tone == LqTone.positive ? c.accentBottom : ink, const Color(0xFFFFFFFF));
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: LqSpace.x2, vertical: 3),
       decoration: BoxDecoration(
